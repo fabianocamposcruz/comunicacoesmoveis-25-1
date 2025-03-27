@@ -4,18 +4,20 @@ from fDrawSector import DrawSector
 
 def DrawDeploy(dR, vtBs, fig):
     
+    dDimX = 5*dR  # Dimensão X do grid
+    dDimY = 6*np.sqrt(3/4)*dR  # Dimensão Y do grid
     # Desenhando os setores hexagonais
     for vtB in vtBs:
         x, y = DrawSector(dR, vtB)
-        fig.add_trace(go.Scatter(x=x, y=y, mode='lines', line=dict(color='black')))
-
+        fig.add_trace(go.Scatter(x=x, y=y, mode='lines', line=dict(color='white'), hovertemplate='X: %{x} <br>Y: %{y}<extra></extra>'))
     # Plotando as posições das bases (como círculos vermelhos)
     #vtBs = np.array(vtBs)
     #fig.add_trace(go.Scatter(x=vtBs.real, y=vtBs.imag, mode='markers', marker=dict(color='red', size=4)))
 
     # Atualizando o layout
     fig.update_layout(
-        template="plotly_dark",
+       # template="plotly_dark",
         xaxis=dict(scaleanchor="y"),  # Garante que a escala de x e y seja a mesma
-        yaxis=dict(scaleanchor="x")
+        yaxis=dict(scaleanchor="x"),
+        showlegend=False,
     )

@@ -1,19 +1,12 @@
 import numpy as np
+from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from fDrawDeploy import DrawDeploy
-from fDrawSector import DrawSector
 
-def GenerateGraph (dFc, vtBsMicro):
-    # Entrada de parâmetros
-    dR = 500  # Raio do Hexágono
-    dHMob = 1.5  # Altura do receptor em metros
-    dHBs = 32  # Altura do transmissor em metros
-    dPtdBm = 21  # EIRP em dBm (incluindo ganho e perdas)
-    dPtdBmMicro = 20
-    dSensitivity = -90  # Sensibilidade do receptor
-
+def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensitivity):
+           
     # Cálculos de outras variáveis que dependem dos parâmetros de entrada
-    dPasso = np.ceil(dR/16).astype(int)  # Resolução do grid: distância entre pontos de medição
+    dPasso = np.ceil(dR/20).astype(int)  # Resolução do grid: distância entre pontos de medição
     dRMin = dPasso  # Raio de segurança
     dIntersiteDistance = 2*np.sqrt(3/4)*dR  # Distância entre ERBs (somente para informação)
     dDimX = 5*dR  # Dimensão X do grid
@@ -31,9 +24,9 @@ def GenerateGraph (dFc, vtBsMicro):
     dOffset = np.pi/6 # Ângulo relativo entre as ERBs com relação ao centro
     for iBs in range(2, 8):
         vtBs.append(dR*np.sqrt(3)*np.exp(1j*((iBs-2)*np.pi/3 + dOffset))) # Acrescenta a outras ERBs ao redor da ERB 1
+    teste = vtBs
     vtBs = np.array(vtBs) + (dDimX/2 + 1j*dDimY/2)  # Ajuste de posição das bases (posição relativa ao canto inferior esquerdo)
-    vtBsTotal = vtBs
-    vtBsTotal.append(vtBsMicro)
+    
     # Matriz de referência com posição de cada ponto do grid
     dDimY = dDimY + np.mod(dDimY, dPasso)  # Ajuste de dimensão para medir toda a dimensão do grid
     dDimX = dDimX + np.mod(dDimX, dPasso)  # Ajuste de dimensão para medir toda a dimensão do grid
@@ -56,6 +49,7 @@ def GenerateGraph (dFc, vtBsMicro):
         # Cálulo da maior potência em cada ponto de medição
         mtPowerFinaldBm = np.maximum(mtPowerFinaldBm, mtPowerEachBSdBm)
     
+    
     for iBsD in range(len(vtBsMicro)):  
         
         mtPosEachBSMicro = (mtPosx + 1j*mtPosy) - vtBsMicro[iBsD] 
@@ -70,32 +64,48 @@ def GenerateGraph (dFc, vtBsMicro):
         mtPowerFinaldBm = np.maximum(mtPowerFinaldBm, mtPowerEachBSdBmMicro)
 
     dOutRate = 100 * len(np.where(mtPowerFinaldBm < dSensitivity)[0]) / mtPowerFinaldBm.size
-
+    
+    
+    dOutRatePoint = np.where (mtPowerFinaldBm < dSensitivity, 0, 1)
+    
     # Criando o gráfico interativo com plotly
     fig = go.Figure()
+    #fig = make_subplots(rows=1, cols=2)
 
     # Adicionando a camada de potência final no gráfico
     fig.add_trace(go.Heatmap(
+        #z=mtPowerFinaldBm,  # Potência final (média das ERBs)
+        z=dOutRatePoint,
+        x=mtPosx[0, :],  # Posições em X
+        y=mtPosy[:, 0], # Posições em Y
+        colorscale='inferno',
+        opacity=1, # Escolha da paleta de cores
+        hovertemplate='X: %{x} <br>Y: %{y}<extra></extra>'  # Exibição do valor da potência ao passar o mouse
+        ))
+    
+    fig.add_trace(go.Heatmap(
         z=mtPowerFinaldBm,  # Potência final (média das ERBs)
         x=mtPosx[0, :],  # Posições em X
-        y=mtPosy[:, 0],
-        customdata=np.array(dOutRate), # Posições em Y
+        y=mtPosy[:, 0], # Posições em Y
         colorscale='plasma',  # Escolha da paleta de cores
-        colorbar=dict(title="Potência (dBm)"),
+        colorbar=dict(title="Potência em (dBm)"),
+        opacity=0,
         hovertemplate='<b>Potência:</b> %{z} dBm <br>X: %{x} <br>Y: %{y}<extra></extra>'  # Exibição do valor da potência ao passar o mouse
     ))
 
-    # Títulos e ajustes do gráfico
     fig.update_layout(
         title="Plotagem da Potência Total das ERBs",
         xaxis_title="Posição X",
         yaxis_title="Posição Y",
         xaxis=dict(scaleanchor="y"),  # Para garantir que o gráfico seja proporcional
         yaxis=dict(scaleanchor="x"),
+        legend=dict(entrywidth=0),
+        coloraxis_showscale=False,
         showlegend=False
-    )
-
+     )
+    
     # Exibindo o gráfico
     DrawDeploy(dR, vtBs, fig)
     fig.show()
-    print (dOutRate)
+    print (dOutRatePoint)
+    
