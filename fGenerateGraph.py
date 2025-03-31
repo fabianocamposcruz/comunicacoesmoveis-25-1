@@ -6,7 +6,7 @@ from fDrawDeploy import DrawDeploy
 def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensitivity):
            
     # Cálculos de outras variáveis que dependem dos parâmetros de entrada
-    dPasso = np.ceil(dR/20).astype(int)  # Resolução do grid: distância entre pontos de medição
+    dPasso = np.ceil(dR/100)  # Resolução do grid: distância entre pontos de medição
     dRMin = dPasso  # Raio de segurança
     dIntersiteDistance = 2*np.sqrt(3/4)*dR  # Distância entre ERBs (somente para informação)
     dDimX = 5*dR  # Dimensão X do grid
@@ -24,7 +24,6 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
     dOffset = np.pi/6 # Ângulo relativo entre as ERBs com relação ao centro
     for iBs in range(2, 8):
         vtBs.append(dR*np.sqrt(3)*np.exp(1j*((iBs-2)*np.pi/3 + dOffset))) # Acrescenta a outras ERBs ao redor da ERB 1
-    teste = vtBs
     vtBs = np.array(vtBs) + (dDimX/2 + 1j*dDimY/2)  # Ajuste de posição das bases (posição relativa ao canto inferior esquerdo)
     
     # Matriz de referência com posição de cada ponto do grid
@@ -80,7 +79,8 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         y=mtPosy[:, 0], # Posições em Y
         colorscale='inferno',
         opacity=1, # Escolha da paleta de cores
-        hovertemplate='X: %{x} <br>Y: %{y}<extra></extra>'  # Exibição do valor da potência ao passar o mouse
+        hovertemplate='X: %{x} <br>Y: %{y}<extra></extra>',  # Exibição do valor da potência ao passar o mouse
+        showscale=False
         ))
     
     fig.add_trace(go.Heatmap(
@@ -90,7 +90,8 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         colorscale='plasma',  # Escolha da paleta de cores
         colorbar=dict(title="Potência em (dBm)"),
         opacity=0,
-        hovertemplate='<b>Potência:</b> %{z} dBm <br>X: %{x} <br>Y: %{y}<extra></extra>'  # Exibição do valor da potência ao passar o mouse
+        hovertemplate='<b>Potência:</b> %{z} dBm <br>X: %{x} <br>Y: %{y}<extra></extra>', # Exibição do valor da potência ao passar o mouse
+        showscale=False
     ))
 
     fig.update_layout(
@@ -100,7 +101,6 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         xaxis=dict(scaleanchor="y"),  # Para garantir que o gráfico seja proporcional
         yaxis=dict(scaleanchor="x"),
         legend=dict(entrywidth=0),
-        coloraxis_showscale=False,
         showlegend=False
      )
     
