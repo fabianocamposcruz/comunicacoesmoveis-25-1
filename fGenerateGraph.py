@@ -29,6 +29,7 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
     # Matriz de referência com posição de cada ponto do grid
     dDimY = dDimY + np.mod(dDimY, dPasso)  # Ajuste de dimensão para medir toda a dimensão do grid
     dDimX = dDimX + np.mod(dDimX, dPasso)  # Ajuste de dimensão para medir toda a dimensão do grid
+        
     mtPosx, mtPosy = np.meshgrid(np.arange(0, dDimX, dPasso), np.arange(0, dDimY, dPasso)) # O meshgrid gera uma matriz vetorizada e o arange retorna valores uniformemente espaçados (inicío, fim, step)
 
     # Iniciação da Matriz de potência recebida máxima em cada ponto medido
@@ -40,7 +41,7 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         mtPosEachBS = (mtPosx + 1j*mtPosy) - vtBs[iBsD] # Matriz com a diferença entre a posição da ERB em questão e os demais pontos
         mtDistEachBs = np.abs(mtPosEachBS)  # Distância entre cada ponto de medição e a ERB, ou seja, o valor absoluto da diferença anterior
         mtDistEachBs[mtDistEachBs < dRMin] = dRMin  # Implementação do raio de segurança
-        
+        teste =np.where(mtDistEachBs <= dR)
         # Okumura-Hata (cidade urbana) - dB
         mtPldB = 69.55 + 26.16*np.log10(dFc) + (44.9 - 6.55*np.log10(dHBs))*np.log10(mtDistEachBs/1e3) - 13.82*np.log10(dHBs) - dAhm
         mtPowerEachBSdBm = dPtdBm - mtPldB  # Potências recebidas em cada ponto de medição
@@ -63,10 +64,7 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         mtPowerFinaldBm = np.maximum(mtPowerFinaldBm, mtPowerEachBSdBmMicro)
 
     dOutRate = 100 * len(np.where(mtPowerFinaldBm < dSensitivity)[0]) / mtPowerFinaldBm.size
-    
-    
     dOutRatePoint = np.where (mtPowerFinaldBm < dSensitivity, 0, 1)
-    
     # Criando o gráfico interativo com plotly
     fig = go.Figure()
     #fig = make_subplots(rows=1, cols=2)
@@ -81,8 +79,7 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         opacity=1, # Escolha da paleta de cores
         hovertemplate='X: %{x} <br>Y: %{y}<extra></extra>',  # Exibição do valor da potência ao passar o mouse
         showscale=False
-        ))
-    
+    ))
     fig.add_trace(go.Heatmap(
         z=mtPowerFinaldBm,  # Potência final (média das ERBs)
         x=mtPosx[0, :],  # Posições em X
@@ -93,9 +90,17 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         hovertemplate='<b>Potência:</b> %{z} dBm <br>X: %{x} <br>Y: %{y}<extra></extra>', # Exibição do valor da potência ao passar o mouse
         showscale=False
     ))
-
+    if vtBsMicro:
+        fig.add_trace(go.Scatter(
+            x=vtBsMicro.real, 
+            y=vtBsMicro.imag, 
+            mode='markers', 
+            marker=dict(color='red', size=10), 
+            hovertemplate='<b>Micro-célula</b><br>X: %{x} <br>Y: %{y}<extra></extra>'
+        ))
     fig.update_layout(
-        title="Plotagem da Potência Total das ERBs",
+        template="simple_white",
+        title=f"Campo com Outage: {dOutRate} %",
         xaxis_title="Posição X",
         yaxis_title="Posição Y",
         xaxis=dict(scaleanchor="y"),  # Para garantir que o gráfico seja proporcional
@@ -107,5 +112,4 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
     # Exibindo o gráfico
     DrawDeploy(dR, vtBs, fig)
     fig.show()
-    print (dOutRatePoint)
-    
+    print(mtPowerFinaldBm.dtype)

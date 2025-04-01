@@ -2,13 +2,13 @@ import numpy as np
 from fGenerateGraph import GenerateGraph
 
 dFc = 800
-X = 225
-Y = 2475
+X = 1000
+Y = 1732.051
 dR = 500  # Raio do Hexágono
 dHMob = 1.5  # Altura do receptor em metros
 dHBs = 32  # Altura do transmissor em metros
-dPtdBm = 21  # EIRP em dBm (incluindo ganho e perdas)
-dPtdBmMicro = 20
+dPtdBm = 22  # EIRP em dBm (incluindo ganho e perdas)
+dPtdBmMicro = 5
 dSensitivity = -90  # Sensibilidade do receptor
 
 vtBsMicro = np.load('ListMicroCell.npy')
