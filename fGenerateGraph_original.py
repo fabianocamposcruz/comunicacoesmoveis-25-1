@@ -89,7 +89,7 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         hovertemplate='<b>Potência:</b> %{z} dBm <br>X: %{x} <br>Y: %{y}<extra></extra>', # Exibição do valor da potência ao passar o mouse
         showscale=False
     ))
-    if np.array(vtBsMicro).any():
+    if vtBsMicro.any():
         fig.add_trace(go.Scatter(
             x=vtBsMicro.real, 
             y=vtBsMicro.imag, 

@@ -14,10 +14,3 @@ def DrawDeploy(dR, vtBs, fig):
     #vtBs = np.array(vtBs)
     fig.add_trace(go.Scatter(x=vtBs.real, y=vtBs.imag, mode='markers', marker=dict(color='red', size=10), hovertemplate='X: %{x} <br>Y: %{y}<extra></extra>', hoverinfo='none'))
 
-    # Atualizando o layout
-    #fig.update_layout(
-     #  # template="plotly_dark",
-     #   xaxis=dict(scaleanchor="y"),  # Garante que a escala de x e y seja a mesma
-      #  yaxis=dict(scaleanchor="x"),
-       # showlegend=False,
-    #)
