@@ -89,7 +89,7 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         hovertemplate='<b>Potência:</b> %{z} dBm <br>X: %{x} <br>Y: %{y}<extra></extra>', # Exibição do valor da potência ao passar o mouse
         showscale=False
     ))
-    if vtBsMicro.any():
+    if np.array(vtBsMicro).any():
         fig.add_trace(go.Scatter(
             x=vtBsMicro.real, 
             y=vtBsMicro.imag, 
@@ -99,7 +99,7 @@ def GenerateGraph (dFc, dR, dHMob, dHBs, dPtdBm, dPtdBmMicro, vtBsMicro, dSensit
         ))
     fig.update_layout(
         template="simple_white",
-        title=f"Campo com Outage: {dOutRate} %",
+        title=f"Campo com Outage: {dOutRate:.2f} %",
         xaxis_title="Posição X",
         yaxis_title="Posição Y",
         xaxis=dict(scaleanchor="y"),  # Para garantir que o gráfico seja proporcional

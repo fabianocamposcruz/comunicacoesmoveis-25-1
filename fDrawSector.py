@@ -17,3 +17,5 @@ def DrawSector(dR, dCenter):
 
     # Retornar os dados do hexágono para plotagem
     return vtHexp.real, vtHexp.imag
+
+
