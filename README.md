@@ -12,7 +12,7 @@
 - Análise visual de potência recebida 
 - Análise de Outage de potência
 
-### Hands-on 02: Caracterização de canal banda estreita (modelagem e caracterização do desvanecimento de pequena escala) - [Link via Github](https://github.com/vicentesousa/DCO1020/blob/main/hands_ons/h01_parte_03_2025.ipynb)  - [Link alternativo via nbviewer](https://nbviewer.jupyter.org/github/vicentesousa/DCO1020/blob/main/hands_ons/h01_parte_03_2025.ipynb)
+### Hands-on 02: Caracterização de canal banda estreita (modelagem e caracterização do desvanecimento de pequena escala) - [Link via Github](https://github.com/fabianocamposcruz/comunicacoesmoveis-25-1/Hands-on_02/h01_parte_03_2025.ipynb)  - [Link alternativo via nbviewer](https://nbviewer.jupyter.org/github/fabianocamposcruz/comunicacoesmoveis-25-1/Hands-on_02/h01_parte_03_2025.ipynb)
 
 **Objetivos:**
 - Gerar uma série temporal sintética com Perda de Percurso, Sombreamento e Desvanecimento m-Nakagami;
